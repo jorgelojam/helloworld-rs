@@ -25,12 +25,14 @@ import javax.ws.rs.Produces;
 import org.eclipse.microprofile.metrics.MetricUnits;
 import org.eclipse.microprofile.metrics.annotation.Counted;
 import org.eclipse.microprofile.metrics.annotation.Timed;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.SwaggerDefinition;
-import io.swagger.annotations.Tag;
+import org.eclipse.microprofile.openapi.annotations.OpenAPIDefinition;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
+import org.eclipse.microprofile.openapi.annotations.info.Info;
+import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 
 /**
  * A simple REST service which is able to say hello to someone using
@@ -41,17 +43,21 @@ import io.swagger.annotations.Tag;
  */
 
 @Path("/")
-@Api(tags = { "Saludos Resource" })
-@SwaggerDefinition(tags = { @Tag(name = "Saludos Resource", description = "Servicios que entregar saludos") })
+@OpenAPIDefinition(info = @Info(title = "Saludos Resource", description = "Servicios que entregar saludos", version = "1.0"))
 public class HelloWorld {
 	@Inject
 	HelloService helloService;
 
 	@GET
 	@Path("/json")
-	@Counted(description = "Contador saludo 1", absolute = true, monotonic = true)
+	@Counted(description = "Contador saludo 1", absolute = true)
 	@Timed(name = "saludo1-time", description = "Tiempo de procesamiento de saludo 1", unit = MetricUnits.MILLISECONDS, absolute = true)
-	@ApiOperation(value = "Saludo 1", notes = "Retorna el valor de saludo 1", response = String.class)
+	@APIResponse(
+		responseCode = "200",
+		description = "Respuesta saludo 1",
+		content = @Content(mediaType = "application/json")
+	)
+	@Operation(summary = "Saludo 1", description = "Retorna el valor de saludo 1")
 	@Produces({ "application/json" })
 	public String getHelloWorldJSON() {
 		return "{\"result\":\"" + helloService.createHelloMessage("World") + "\"}";
@@ -59,9 +65,14 @@ public class HelloWorld {
 
 	@GET
 	@Path("/xml")
-	@Counted(description = "Contador saludo 2", absolute = true, monotonic = true)
+	@Counted(description = "Contador saludo 2", absolute = true)
 	@Timed(name = "saludo2-time", description = "Tiempo de procesamiento de saludo 2", unit = MetricUnits.MILLISECONDS, absolute = true)
-	@ApiOperation(value = "Saludo 2", notes = "Retorna el valor de saludo 2", response = String.class)
+	@APIResponse(
+		responseCode = "200",
+		description = "Respuesta saludo 2",
+		content = @Content(mediaType = "application/xml")
+	)
+	@Operation(summary = "Saludo 2", description = "Retorna el valor de saludo 2")
 	@Produces({ "application/xml" })
 	public String getHelloWorldXML() {
 		return "<xml><result>" + helloService.createHelloMessage("World") + "</result></xml>";
@@ -69,12 +80,17 @@ public class HelloWorld {
 
 	@GET
 	@Path("/echo/{texto}")
-	@Counted(description = "Contador echo", absolute = true, monotonic = true)
+	@Counted(description = "Contador echo", absolute = true)
 	@Timed(name = "echo-time", description = "Tiempo de procesamiento de echo", unit = MetricUnits.MILLISECONDS, absolute = true)
-	@ApiOperation(value = "Echo", notes = "Retorna el valor de echo", response = String.class)
+	@APIResponse(
+		responseCode = "200",
+		description = "Respuesta Echo",
+		content = @Content(mediaType = "application/json")
+	)
+	@Operation(summary = "Echo", description = "Retorna el valor de echo")
 	@Produces({ "application/json" })
 	public String replyEcho(
-			@ApiParam(value = "texto requerido para reply", required = true) @PathParam("texto") String texto) {
+			@Parameter(description = "texto requerido para reply", required = true, example = "foo", schema = @Schema(type =SchemaType.STRING)) @PathParam("texto") String texto) {
 		return "{\"echo\":\"" + texto + "\"}";
 	}
 
