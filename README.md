@@ -14,13 +14,13 @@ Para compilar se incluye el plugins de docker para empaquetar todo el proyecto:
 mvn clean package docker:build
 ```
 
-Para correr el contenedor se debe ejeucutar lo siguiente:
+Para correr el contenedor se debe ejecutar lo siguiente:
 
 ```bash
 docker run -p 8080:8080 -p 9990:9990 --rm -it helloworld-rs
 ```
 
-En una termina distinta se puede verificar los endpoints por medio de:
+En una terminal distinta se puede verificar los endpoints por medio de:
 
 ```bash
 curl http://localhost:8080/helloworld-rs/rest/json
